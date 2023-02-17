@@ -1,20 +1,28 @@
 const fastify = require('fastify')({logger: true});
-const items = require('./items');
-
 
 const PORT = 5001;
 
+fastify.register(require('@fastify/multipart'));
 fastify.register(require('@fastify/swagger'));
 fastify.register(require('@fastify/swagger-ui'), {
   exposeRoute: true,
-  routePrefix: '/docs/api',
+  routePrefix: '/api/docs',
   swagger: {
     info: {
       title: 'Fastify api test',
     },
   }
 });
-fastify.register(require('./routes/item'));
+fastify.register(require('./routes'), {
+  prefix: '/api/v1/'
+});
+fastify.register(require('@fastify/env'), {
+  dotenv: {
+    path: `${__dirname}/.env`,
+    debug: true
+  },
+  schema: {}
+});
 
 
 const start = async () => {
